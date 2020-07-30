@@ -1,5 +1,6 @@
 # reviewScraper
 Built and deployed a Review Scrapper which scrapes reviews from E-commerce Platforms Flipkart
+Deployed using pivotal can be accessed using :https://reviewscrapper-grateful-panther-et.cfapps.io/
 
 # Web Scraping(Text)
 #1. Introduction:
@@ -66,7 +67,6 @@ system.
 
 2. After the installer gets downloaded, double click on the installer file to start
 installing the application.
- 
 3. Click on the next button to move to the next step and accept the agreement.
 4. Select the type of installation:
 5. Select the features to install.
@@ -114,7 +114,7 @@ from urllib.request import urlopen as uReq
 import pymongo
 <br>
 b) Initialize the flask app
-app = Flask(__name__) # initialising the flask app with the name    'app'<br>
+app = Flask(__name__) # initialising the flask app with the name'app'<br>
 c) Creating the routes to redirect the control inside the application itself. Based on the
 route path, the control gets transferred inside the application.<br>
 @app.route('/',methods=['POST','GET']) # route with allowed methods as POST and GET 
@@ -150,11 +150,12 @@ The equivalent Python code is:
 productLink = "https://www.flipkart.com" +box.div.div.div.a['href'] # extracting the actual product link
 prodRes = requests.get(productLink) # getting the product
 page from server
-prod_html = bs(prodRes.text, "html.parser") # parsing the product page as HTML
+prod_html = bs(prodRes.text, "html.parser") # parsing the product page as HTML<br>
 iv. On the product page, we need to find which HTML section contains the
 customer comments. Let’s do inspect element(ctrl+shift+i) on the page first
 to open the element-wise view of the HTML page. There we find the tag
-which corresponds to the customer comments as shown below:
+prod_html = bs(prodRes.text, "html.parser") # parsing the product page as HTML<br>
+which corresponds to the customer comments as shown below:<br>
 ## Python code for implementing the same is:<br>
 commentboxes = prod_html.find_all('div', {'class':"_3nrCtb"}) # finding the HTML section containing thecustomer comments<br>
 v. Once we have the list of all the comments, we now shall extract the
