@@ -106,63 +106,66 @@ c) The application now searches for reviews and shows the result on the ‘resul
 page.<br>
 8. Understanding flask_app.py.<br>
 a) Import the necessary libraries:<br>
-from flask import Flask, render_template, request,jsonify
+```from flask import Flask, render_template, request,jsonify
 from flask_cors import CORS,cross_origin
 import requests
 from bs4 import BeautifulSoup as bs
 from urllib.request import urlopen as uReq
-import pymongo
+import pymongo```
 <br>
 b) Initialize the flask app
-app = Flask(__name__) # initialising the flask app with the name'app'<br>
+-- app = Flask(__name__) # initialising the flask app with the name'app'<br>
 c) Creating the routes to redirect the control inside the application itself. Based on the
 route path, the control gets transferred inside the application.<br>
-@app.route('/',methods=['POST','GET']) # route with allowed methods as POST and GET 
+-- @app.route('/',methods=['POST','GET']) # route with allowed methods as POST and GET 
 d) Now let’s understand the ‘index()’ function.<br>
 i. If the HTTP request method is POST(which is defined in index.html at
 form submit action), then first check if the records for the searched
 keyword is already present in the database or not. If present, show that to
 the user.<br>
-dbConn = pymongo.MongoClient("mongodb://localhost:27017/")
+-- dbConn = pymongo.MongoClient("mongodb://localhost:27017/")
 # opening a connection to Mongo
-db = dbConn['crawlerDB'] # connecting to the database
+-- db = dbConn['crawlerDB'] # connecting to the database
 called crawlerDB
-reviews = db[searchString].find({}) # searching the
+-- reviews = db[searchString].find({}) # searching the
 collection with the name same as the keyword
-if reviews.count() > 0: # if there is a collection with
+-- if reviews.count() > 0: # if there is a collection with
 searched keyword and it has records in it
- return render_template('results.html',reviews=reviews)
+ -- return render_template('results.html',reviews=reviews)
 # Show the results to user<br>
 ii. If the searched keyword doesn’t have a database entry, then the application
 tries to fetch the details from the internet, as shown below:
-flipkart_url = "https://www.flipkart.com/search?q=" +
-searchString # preparing the URL to search the product on
+-- flipkart_url = "https://www.flipkart.com/search?q=" +
+-- searchString # preparing the URL to search the product on
 Flipkart
 uClient = uReq(flipkart_url) # requesting the webpage from
 the internet
-flipkartPage = uClient.read() # reading the webpage
-uClient.close() # closing the connection to the web server
-flipkart_html = bs(flipkartPage, "html.parser") # parsing the webpage as HTML
+-- flipkartPage = uClient.read() # reading the webpage
+-- uClient.close() # closing the connection to the web server
+-- flipkart_html = bs(flipkartPage, "html.parser") # parsing the webpage as HTML
+<br>
 iii. Once we have the entire HTML page, we try to get the product URL and
 then jump to the product page. It is similar to redirecting to the following
 page:<br>
 The equivalent Python code is:
-productLink = "https://www.flipkart.com" +box.div.div.div.a['href'] # extracting the actual product link
+```productLink = "https://www.flipkart.com" +box.div.div.div.a['href'] # extracting the actual product link
 prodRes = requests.get(productLink) # getting the product
 page from server
-prod_html = bs(prodRes.text, "html.parser") # parsing the product page as HTML<br>
+prod_html = bs(prodRes.text, "html.parser") # parsing the product page as HTML```
+<br>
 iv. On the product page, we need to find which HTML section contains the
 customer comments. Let’s do inspect element(ctrl+shift+i) on the page first
 to open the element-wise view of the HTML page. There we find the tag
-prod_html = bs(prodRes.text, "html.parser") # parsing the product page as HTML<br>
+-- prod_html = bs(prodRes.text, "html.parser") # parsing the product page as HTML<br>
 which corresponds to the customer comments as shown below:<br>
 ## Python code for implementing the same is:<br>
-commentboxes = prod_html.find_all('div', {'class':"_3nrCtb"}) # finding the HTML section containing thecustomer comments<br>
+-- commentboxes = prod_html.find_all('div', {'class':"_3nrCtb"}) # finding the HTML section containing thecustomer comments 
+<br>
 v. Once we have the list of all the comments, we now shall extract the
 customer name(in grey), the rating(in green), comment heading(marked in
 red), and the customer comment( highlighted in yellow) from the tag.
 The Python code for the same is:<br>
-reviews = [] # initializing an empty list for reviews
+```reviews = [] # initializing an empty list for reviews
 # Iterating over the comment section to get the details of the customer and their comments
 for commentbox in commentboxes:
  try:
@@ -182,14 +185,16 @@ for commentbox in commentboxes:
 {'class': ''})
  custComment = comtag[0].div.text
  except:
- custComment = 'No Customer Comment' <br>
+ custComment = 'No Customer Comment'
+ ```
+ <br>
 If you notice, the parsing is done using the try-except blocks. It is done to
 handle the exception cases. If there is an exception in parsing the tag, we’ll
 insert a default string in that place.<br>
 vi. Once we have the details, we’ll insert them into MongoDB. After that,
 we’ll return the ‘results.html’ page as the response to the user containing all
 the reviews. The python code for that is:<br>
-mydict = {"Product": searchString, "Name": name, "Rating":
+```mydict = {"Product": searchString, "Name": name, "Rating":
 rating, "CommentHead": commentHead,
  "Comment": custComment} # saving that detail
 to a dictionary
@@ -197,7 +202,9 @@ to a dictionary
 containing the rview comments to the collection
  reviews.append(mydict) # appending the comments to the
 review list
-return render_template('results.html', reviews=reviews) #showing the review to the user<br>
+return render_template('results.html', reviews=reviews) #showing the review to the user```
+
+<br>
 e) After this, we’ll just run our python app on our local system, and it’ll start scraping for reviews
 Home Page:
 Search Results are obtained
